@@ -4,23 +4,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {
   generateFlagsByPixelsColorOccurance as utilGenerateFlagsByPixelsColorOccurance
  } from "../lib/detectionToGeometryRange";
- import {
-  generateFlagsByThreshold as utilGenerateFlagsByThreshold,
- } from "../lib/detectionToGeometryThreshold";
 import useOpenCV from "../customHooks/useOpenCV";
 import useAnimationFrame from "../customHooks/useAnimationFrame";
 import { useFullscreen   } from "rooks";
 import { createPlane, createLights } from "./threejsUtils";
 
-export interface SceneParam {
-  min: number | null;
-  max: number | null;
-  countryCode: string | null;
-}
-
-
 interface ThreeCanvasProps {
-  params: SceneParam;
+  filename: string;
   width: number;
   height: number;
   velocity: number;
@@ -29,7 +19,7 @@ interface ThreeCanvasProps {
 const MAX_Z = 0.3;
 const MIN_Z = 0;
 
-function ThreeCanvas({params: { min, max, countryCode }, velocity, width, height} : ThreeCanvasProps) {
+function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
   const { cv } = useOpenCV();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scene = useRef(new THREE.Scene());
@@ -90,7 +80,7 @@ function ThreeCanvas({params: { min, max, countryCode }, velocity, width, height
   }, [canvasRef]);
 
   useEffect(() => {
-    if(min && max && countryCode) {
+    if(filename) {
       setLoading(true);
       // clear scenes
       while(scene.current.children.length > 0) {
@@ -102,11 +92,11 @@ function ThreeCanvas({params: { min, max, countryCode }, velocity, width, height
       //scene.current.add(create3dPointLighting());
       scene.current.add(createLights());
       //scene.current.add(...createHelpers());
-      scene.current.add(generateFlagsByPixelsColorOccurance(countryCode));
+      scene.current.add(generateFlagsByPixelsColorOccurance(filename));
       setLoading(false);
 
     }
-  }, [min, max, countryCode, setLoading]);
+  }, [filename, setLoading]);
 
   useEffect(() => {
     stop();
@@ -150,15 +140,7 @@ function ThreeCanvas({params: { min, max, countryCode }, velocity, width, height
     return group;
   }
 
-  //use threshold to detect colors and shape with a binarythreshold and its opposite
-  // deprecated :)
-  function generateFlagsByThreshold(imageDomId :string, minThreshold: number, maxThreshold: number) {
-    const meshes = utilGenerateFlagsByThreshold(cv, imageDomId, minThreshold, maxThreshold);
-    scene.current.add(...meshes);
-  }
-
   return (
-
     <div>
       { loading ? <button className="btn loading lg:absolute md:static lg:top-1/2 lg:left-1/2">loading</button> : <></> }
       <canvas ref={canvasRef} className="webgl" onDoubleClick={e => toggle(e.target as any)}></canvas>

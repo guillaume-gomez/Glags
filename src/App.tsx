@@ -4,7 +4,7 @@ import { useWindowSize } from "rooks";
 import useOpenCV from "./customHooks/useOpenCV";
 import { flags as flagsData, FlagData, listOfFlagKeys } from "./constant";
 import FlagsSelect from "./components/FlagsSelect";
-import ThreeCanvas, { SceneParam } from "./components/ThreeCanvas";
+import ThreeCanvas from "./components/ThreeCanvas";
 import './App.css';
 
 const flagKeys = listOfFlagKeys();
@@ -19,7 +19,7 @@ function App() {
   const [flags] = useState<FlagData[]>(sortBy(flagsData, 'name'));
   const [minThresholdInput, setMinThresholdInput] = useState<number>(100);
   const [maxThresholdInput, setMaxThresholdInput] = useState<number>(200);
-  const [params, setParams] = useState<SceneParam>({min: null, max: null, countryCode: null});
+  const [filename, setFilename] = useState<string|null>(null);
 
 
   useEffect(() => {
@@ -27,7 +27,7 @@ function App() {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const urlParams = Object.fromEntries(urlSearchParams.entries());
       if(urlParams.flag && flagKeys.includes(urlParams.flag)) {
-        setParams({min: 1, max:1, countryCode: urlParams.flag})
+        setFilename(urlParams.flag)
       }
     }
   }, [openCVLoaded]);
@@ -41,13 +41,11 @@ function App() {
   }, [innerWidth, innerHeight, refContainer]);
 
 
-  function onChange(countryCode: string) {
-    window.history.replaceState(null, "", `?flag=${countryCode}`);
+  function onChange(filename: string) {
+    setFilename(filename);
+    window.history.replaceState(null, "", `?flag=${filename}`);
   }
 
-  function reRunDebug() {
-    setParams({...params , min: minThresholdInput, max: maxThresholdInput})
-  }
 
   return (
     <div className="App">
@@ -55,17 +53,8 @@ function App() {
         <div className="lg:absolute md:static lg:top-8 lg:left-8 lg:max-w-xs md:max-w-full md:w-full">
           <div className="card bg-base-100 shadow-2xl w-full">
            <div className="card-body p-3 flex flex-col gap-5">
-           {/*debugZone &&
-              <div className="flex flex-col justify-center items-center gap-12">
-                <h5>Debug Zone</h5>
-                  <div className="flex flex-col gap-5">
-                    <canvas id="canvasTest1"></canvas>
-                    <canvas id="canvasTest2"></canvas>
-                    <canvas id="contours"></canvas>
-                  </div>
-              </div>*/}
               { openCVLoaded ?
-                <FlagsSelect value={params.countryCode || ""} flags={flags} onChange={onChange} /> :
+                <FlagsSelect value={filename || ""} flags={flags} onChange={onChange} /> :
                 <p>Loading Open CV</p>
               }
               <div>
@@ -98,7 +87,7 @@ function App() {
           </div>
         </div>
         <ThreeCanvas
-          params={params}
+          filename={filename || ""}
           velocity={velocity}
           width={widthContainer}
           height={heightContainer}
