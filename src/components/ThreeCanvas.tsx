@@ -7,7 +7,7 @@ import {
 import useOpenCV from "../customHooks/useOpenCV";
 import useAnimationFrame from "../customHooks/useAnimationFrame";
 import { useFullscreen   } from "rooks";
-import { createPlane, createLights } from "./threejsUtils";
+import { createPlane, createLights, create3dPointLighting } from "./threejsUtils";
 
 interface ThreeCanvasProps {
   filename: string;
@@ -52,7 +52,7 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
           width: window.innerWidth,
           height: window.innerHeight
       }
-      scene.current.background = new THREE.Color( 0x3c3c3c );
+      scene.current.background = new THREE.Color( 0xe9d5e9 );
 
 
       // Camera
@@ -73,7 +73,7 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
       controls.enablePan = true;
 
       scene.current.add(createPlane());
-      //scene.current.add(create3dPointLighting());
+      scene.current.add(create3dPointLighting());
       scene.current.add(createLights());
       //scene.current.add(...createHelpers());
     }
