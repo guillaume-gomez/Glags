@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import {
-  generateFlagsByPixelsColorOccurance as utilGenerateFlagsByPixelsColorOccurance
- } from "../lib/detectionToGeometryRange";
+ import {
+  generateGeometriesByNumberOfColors as utilGenerateFlagsByPixelsColorOccurance,
+} from "colors2geometries";
 import useOpenCV from "../customHooks/useOpenCV";
 import useAnimationFrame from "../customHooks/useAnimationFrame";
 import { useFullscreen   } from "rooks";
@@ -123,6 +123,7 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
   // find all the colors in the image and run findcountours based on this colors
   function generateFlagsByPixelsColorOccurance(imageDomId: string) : THREE.Group {
     const meshes = utilGenerateFlagsByPixelsColorOccurance(imageDomId);
+    console.log(meshes);
     let group = new THREE.Group();
     group.name = "MY_FLAG_GROUP";
     group.add(...meshes);
