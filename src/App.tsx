@@ -53,10 +53,15 @@ function App() {
         <div className="lg:absolute md:static lg:top-8 lg:left-8 lg:max-w-xs md:max-w-full md:w-full">
           <div className="card bg-base-100 shadow-2xl w-full">
            <div className="card-body p-3 flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
               { openCVLoaded ?
                 <FlagsSelect value={filename || ""} flags={flags} onChange={onChange} /> :
                 <p>Loading Open CV</p>
               }
+              <p className="text-xs">A flag is missing ? please create an issue
+                <a className="link link-secondary px-1" href="https://github.com/guillaume-gomez/glags/issues">here</a>
+              </p>
+              </div>
               <div>
                 <input
                   type="range"

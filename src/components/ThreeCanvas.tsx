@@ -74,7 +74,7 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
 
       scene.current.add(createPlane());
       scene.current.add(create3dPointLighting());
-      scene.current.add(createLights());
+      //scene.current.add(createLights());
       //scene.current.add(...createHelpers());
     }
   }, [canvasRef]);
