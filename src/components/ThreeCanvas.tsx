@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
  import {
   generateGeometriesByNumberOfColors as utilGenerateFlagsByPixelsColorOccurance,
+  originalPositionMeshes
 } from "colors2geometries";
 import useOpenCV from "../customHooks/useOpenCV";
 import useAnimationFrame from "../customHooks/useAnimationFrame";
@@ -14,13 +15,13 @@ interface ThreeCanvasProps {
   width: number;
   height: number;
   velocity: number;
+  alignMeshes: boolean;
 }
 
 const MAX_Z = 0.3;
 const MIN_Z = 0;
 
-function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
-  const { cv } = useOpenCV();
+function ThreeCanvas({filename, velocity, width, height, alignMeshes} : ThreeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scene = useRef(new THREE.Scene());
   const groupRef = useRef<THREE.Group|null>(null);
@@ -28,6 +29,7 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
   const camera = useRef<THREE.PerspectiveCamera | null>(null);
   const renderer = useRef<THREE.WebGLRenderer| null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [originalPositionsZ, setOriginalPositionsZ] = useState<number[]>([]);
   const { play, stop } = useAnimationFrame(animate);
   const {
     toggle
@@ -75,7 +77,6 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
       scene.current.add(createPlane());
       scene.current.add(create3dPointLighting());
       //scene.current.add(createLights());
-      //scene.current.add(...createHelpers());
     }
   }, [canvasRef]);
 
@@ -89,14 +90,28 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
       groupRef.current = null;
 
       scene.current.add(createPlane());
-      //scene.current.add(create3dPointLighting());
       scene.current.add(createLights());
-      //scene.current.add(...createHelpers());
       scene.current.add(generateFlagsByPixelsColorOccurance(filename));
       setLoading(false);
 
     }
   }, [filename, setLoading]);
+
+  useEffect(() => {
+    if(!groupRef.current) {
+      return;
+    }
+
+    if(alignMeshes) {
+      groupRef.current.children.forEach((child : any, index: number) => {
+        child.position.z = index * 0.0001;
+      });
+    } else {
+      groupRef.current.children.forEach((child : any, index: number) => {
+        child.position.z = originalPositionsZ[index];
+      });
+    }
+  }, [alignMeshes])
 
   useEffect(() => {
     stop();
@@ -123,21 +138,19 @@ function ThreeCanvas({filename, velocity, width, height} : ThreeCanvasProps) {
   // find all the colors in the image and run findcountours based on this colors
   function generateFlagsByPixelsColorOccurance(imageDomId: string) : THREE.Group {
     const meshes = utilGenerateFlagsByPixelsColorOccurance(imageDomId);
-    console.log(meshes);
+    setOriginalPositionsZ(originalPositionMeshes(meshes).map(position => position.z));
+
     let group = new THREE.Group();
     group.name = "MY_FLAG_GROUP";
     group.add(...meshes);
 
     const bbox = new THREE.Box3().setFromObject(group);
     group.position.set(-(bbox.min.x + bbox.max.x) / 2, -(bbox.min.y + bbox.max.y), -(bbox.min.z + bbox.max.z) / 2);
-    console.log(bbox)
-    console.log(bbox.min.z + bbox.max.z)
 
     // add ref for the render
     groupRef.current = group;
     // store the direction for move
     groupRefDirections.current = group.children.map(flagItem => 1);
-
     return group;
   }
 

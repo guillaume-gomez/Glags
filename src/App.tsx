@@ -20,6 +20,7 @@ function App() {
   const [minThresholdInput, setMinThresholdInput] = useState<number>(100);
   const [maxThresholdInput, setMaxThresholdInput] = useState<number>(200);
   const [filename, setFilename] = useState<string|null>(null);
+  const [alignMeshes, setAlignMeshes] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -74,6 +75,17 @@ function App() {
                 />
                 <label>Velocity : {velocity * 1000}</label>
               </div>
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <span className="label-text">Align all shapes</span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={alignMeshes}
+                    onClick={() => setAlignMeshes(!alignMeshes)}
+                  />
+                </label>
+              </div>
               <p className="text-xs">Double click to switch to fullscreen</p>
               <div id="image-container">
                   {
@@ -92,6 +104,7 @@ function App() {
           </div>
         </div>
         <ThreeCanvas
+          alignMeshes={alignMeshes}
           filename={filename || ""}
           velocity={velocity}
           width={widthContainer}
