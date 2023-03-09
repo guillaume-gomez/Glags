@@ -29,6 +29,7 @@ function App() {
       const urlParams = Object.fromEntries(urlSearchParams.entries());
       if(urlParams.flag && flagKeys.includes(urlParams.flag)) {
         setFilename(urlParams.flag)
+        setAlignMeshes(false);
       }
     }
   }, [openCVLoaded]);
@@ -44,6 +45,7 @@ function App() {
 
   function onChange(filename: string) {
     setFilename(filename);
+    setAlignMeshes(false);
     window.history.replaceState(null, "", `?flag=${filename}`);
   }
 

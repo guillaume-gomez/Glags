@@ -75,8 +75,7 @@ function ThreeCanvas({filename, velocity, width, height, alignMeshes} : ThreeCan
       controls.enablePan = true;
 
       scene.current.add(createPlane());
-      scene.current.add(create3dPointLighting());
-      //scene.current.add(createLights());
+      scene.current.add(createLights());
     }
   }, [canvasRef]);
 
@@ -84,11 +83,12 @@ function ThreeCanvas({filename, velocity, width, height, alignMeshes} : ThreeCan
     if(filename) {
       setLoading(true);
       // clear scenes
+      console.log(scene.current.children)
       while(scene.current.children.length > 0) {
         scene.current.remove(scene.current.children[0]);
       }
       groupRef.current = null;
-
+      console.log(scene.current.children)
       scene.current.add(createPlane());
       scene.current.add(createLights());
       scene.current.add(generateFlagsByPixelsColorOccurance(filename));

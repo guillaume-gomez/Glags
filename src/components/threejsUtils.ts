@@ -59,8 +59,8 @@ export function createLights() : THREE.Object3D {
     const pointLightHelper3 = new THREE.PointLightHelper(pointLight3);
     //container.add(pointLightHelper3);
 
-    const light = new THREE.RectAreaLight( 0xffffbb, 1.0, 3, 3 );
-    light.position.set(0, 2, 1);
+    const light = new THREE.RectAreaLight( 0xffff00, 1.0, 3, 3 );
+    light.position.set(0, 3, 1);
     container.add(light);
 
     return container;
@@ -70,7 +70,7 @@ export function createLights() : THREE.Object3D {
 
  export function createPlane(): THREE.Mesh {
     const planeGeometry = new THREE.BoxGeometry(2.5, 2.5, 0.5);
-    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xAAAAAA, metalness: 0.5 });
+    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x0f6a9f, metalness: 0.5 });
     const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
     planeMesh.rotateX(-Math.PI/2);
     planeMesh.position.setY(-0.25);
