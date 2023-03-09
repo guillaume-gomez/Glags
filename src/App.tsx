@@ -17,8 +17,6 @@ function App() {
   const [widthContainer, setWidthContainer] = useState<number>(500);
   const [heightContainer, setHeightContainer] = useState<number>(500);
   const [flags] = useState<FlagData[]>(sortBy(flagsData, 'name'));
-  const [minThresholdInput, setMinThresholdInput] = useState<number>(100);
-  const [maxThresholdInput, setMaxThresholdInput] = useState<number>(200);
   const [filename, setFilename] = useState<string|null>(null);
   const [alignMeshes, setAlignMeshes] = useState<boolean>(false);
 
